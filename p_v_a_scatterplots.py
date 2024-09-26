@@ -85,7 +85,7 @@ if row['planning_ref'] == 'E.B.35' else 77 - row['actual'], axis=1)
 data["planning_ref"].replace(
     {'E.B.35':'Cancer 62-day pathways. Total patients seen, and of which those seen within 62 days', 'E.B.27': 'Cancer 28 day waits (faster diagnosis standard)'}, inplace=True)
 
-# remove duplicates which exist for some reason
+# Remove duplicates which exist for some reason
 data = data.drop_duplicates()
 
 # Reset index to ensure proper indexing
@@ -112,7 +112,7 @@ for i, ref in enumerate(unique_refs):
     
     for j in range(len(subset_data)):
         ods_code = subset_data["org_code"].iloc[j]
-        short_name = trust_dict.get(ods_code, short_name)  # Use ODS code if short name not found
+        short_name = trust_dict.get(ods_code, ods_code)  # Use ODS code if short name not found
         axs[i].annotate(short_name, 
                         (subset_data["plan_var"].iloc[j], subset_data["standard_var"].iloc[j]), 
                         xytext=(5, 5), textcoords='offset points')
@@ -120,6 +120,12 @@ for i, ref in enumerate(unique_refs):
     # Draw vertical and horizontal lines at zero
     axs[i].axvline(0, color='gray', linestyle='--')
     axs[i].axhline(0, color='gray', linestyle='--')
+
+    # Add text to each corner of the current scatter plot
+    axs[i].text(0.01, 0.99, 'Below plan, above standard', transform=axs[i].transAxes, ha='left', va='top', color='orange')
+    axs[i].text(0.99, 0.99, 'Above plan & standard', transform=axs[i].transAxes, ha='right', va='top', color='green')
+    axs[i].text(0.01, 0.01, 'Below plan & standard', transform=axs[i].transAxes, ha='left', va='bottom', color='red')
+    axs[i].text(0.99, 0.01, 'Above plan, below standard', transform=axs[i].transAxes, ha='right', va='bottom', color='orange')                                                        
 
 # Layout and show charts
 plt.tight_layout()
