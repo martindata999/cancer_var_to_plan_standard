@@ -1,14 +1,31 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
-from nhs_trusts import NHSTrusts
 
-# Initialize the NHSTrusts class and fetch the data
-nhs_trusts = NHSTrusts()
-trusts = nhs_trusts.get_trusts()
+# Given dictionary of NHS Trusts
+nhs_trusts = {
+    'RN7': 'Dartford',
+    'RVV': 'E Kent',
+    'RWF': 'Maidstone',
+    'RPA': 'Medway',
+    'RDU': 'Frimley',
+    'RXC': 'E Sussex',
+    'RPC': 'Q Victoria',
+    'RYR': 'UH Sussex',
+    'RN5': 'Hampshire Hospitals',
+    'R1F': 'Isle Of Wight',
+    'RHU': 'Portsmouth',
+    'RHM': 'Southampton Univ',
+    'RXQ': 'Buckinghamshire',
+    'RTH': 'Oxford Univ',
+    'RHW': 'Ryl Berkshire',
+    'RTK': 'Ashford',
+    'RA2': 'Ryl Surrey',
+    'RTP': 'Surrey & Sussex'
+}
 
 # Create a dictionary for quick lookup
-trust_dict = {trust['ods_code']: trust['short_name'] for trust in trusts}
+trust_dict = nhs_trusts
 
 # Import data
 data_plan = pd.read_csv("C:/Users/martin.bloyce/OneDrive - NHS/Documents - " +
