@@ -106,8 +106,8 @@ for i, ref in enumerate(unique_refs):
     subset_data = data[data["planning_ref"] == ref]
     axs[i].scatter(subset_data["plan_var"], subset_data["standard_var"], 
     c="blue")
-    axs[i].set_xlabel("Variance from plan")
-    axs[i].set_ylabel("Variance from standard")
+    axs[i].set_xlabel("Variance from plan (percentage points)")
+    axs[i].set_ylabel("Variance from standard (percentage points)")
     axs[i].set_title(f"{ref}")
     
     for j in range(len(subset_data)):
