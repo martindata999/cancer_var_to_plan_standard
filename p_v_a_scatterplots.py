@@ -33,6 +33,8 @@ data_plan = pd.read_csv("C:/Users/martin.bloyce/OneDrive - NHS/Documents - " +
                 "/Planning/2024-25/Plan_vs_Actual/data_csvs/Plans_2425.csv"
                 )
 
+data_plan = data_plan[data_plan["source"] == 'June24_plan']
+
 # Filter rows
 plan_refs = data_plan["planning_ref"].isin(["E.B.35","E.B.27"])
 orgs_only = data_plan["icb_code"] != data_plan["org_code"]
@@ -82,6 +84,9 @@ if row['planning_ref'] == 'E.B.35' else 77 - row['actual'], axis=1)
 # Rename planning_refs to friendly names
 data["planning_ref"].replace(
     {'E.B.35':'Cancer 62-day pathways. Total patients seen, and of which those seen within 62 days', 'E.B.27': 'Cancer 28 day waits (faster diagnosis standard)'}, inplace=True)
+
+# remove duplicates which exist for some reason
+data = data.drop_duplicates()
 
 # Reset index to ensure proper indexing
 data.reset_index(drop=True, inplace=True)
