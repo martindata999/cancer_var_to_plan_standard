@@ -122,10 +122,10 @@ for i, ref in enumerate(unique_refs):
     axs[i].axhline(0, color='gray', linestyle='--')
 
     # Add text to each corner of the current scatter plot
-    axs[i].text(0.01, 0.99, 'Below plan, above standard', transform=axs[i].transAxes, ha='left', va='top', color='orange')
-    axs[i].text(0.99, 0.99, 'Above plan & standard', transform=axs[i].transAxes, ha='right', va='top', color='green')
-    axs[i].text(0.01, 0.01, 'Below plan & standard', transform=axs[i].transAxes, ha='left', va='bottom', color='red')
-    axs[i].text(0.99, 0.01, 'Above plan, below standard', transform=axs[i].transAxes, ha='right', va='bottom', color='orange')                                                        
+    axs[i].text(0.01, 0.99, 'Below plan, above standard', transform=axs[i].transAxes, ha='left', va='top', color='orange', alpha=0.5)
+    axs[i].text(0.99, 0.99, 'Above plan & standard', transform=axs[i].transAxes, ha='right', va='top', color='green', alpha=0.5)
+    axs[i].text(0.01, 0.01, 'Below plan & standard', transform=axs[i].transAxes, ha='left', va='bottom', color='red', alpha=0.5)
+    axs[i].text(0.99, 0.01, 'Above plan, below standard', transform=axs[i].transAxes, ha='right', va='bottom', color='orange', alpha=0.5)                                                        
 
 # Layout and show charts
 plt.tight_layout()
