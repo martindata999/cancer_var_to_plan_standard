@@ -43,14 +43,16 @@ pc_only = data_plan["measure_type"] == "Percentage"
 data_plan = data_plan[plan_refs & orgs_only & pc_only]
 
 # Filter columns
-data_plan = data_plan[["org_code", "dimension_name", "planning_ref", "metric_value"]]
+data_plan = data_plan[
+    ["org_code", "dimension_name", "planning_ref", "metric_value"]
+    ]
 
 # Rename value column
 data_plan.rename(columns={'metric_value': 'plan'}, inplace=True)
 
 # Bring in actuals data
-data_actuals = pd.read_csv("C:/Users/martin.bloyce/OneDrive - NHS/Documents - " +
-                "Regional Analytics - South East/South East/Analysis" +
+data_actuals = pd.read_csv("C:/Users/martin.bloyce/OneDrive - NHS/Documents -" +
+                " Regional Analytics - South East/South East/Analysis" +
                 "/Planning/2024-25/Plan_vs_Actual/data_csvs/current_actuals.csv"
                 )
 
@@ -62,7 +64,9 @@ pc_only = data_actuals["measure_type"] == "Percentage"
 data_actuals = data_actuals[plan_refs & orgs_only & pc_only]
 
 # Filter columns
-data_actuals = data_actuals[["org_code", "dimension_name", "planning_ref", "metric_value"]]
+data_actuals = data_actuals[
+    ["org_code", "dimension_name", "planning_ref", "metric_value"]
+    ]
 
 # Rename value column
 data_actuals.rename(columns={'metric_value': 'actual'}, inplace=True)
@@ -83,7 +87,13 @@ if row['planning_ref'] == 'E.B.35' else 77 - row['actual'], axis=1)
 
 # Rename planning_refs to friendly names
 data["planning_ref"].replace(
-    {'E.B.35':'Cancer 62-day pathways. Total patients seen, and of which those seen within 62 days', 'E.B.27': 'Cancer 28 day waits (faster diagnosis standard)'}, inplace=True)
+    {'E.B.35':
+    "Cancer 62-day pathways. Total patients seen, and of which those seen " +
+    "within 62 days", 
+    'E.B.27': 
+    'Cancer 28 day waits (faster diagnosis standard)'}, 
+    inplace=True
+    )
 
 # Remove duplicates which exist for some reason
 data = data.drop_duplicates()
@@ -112,9 +122,11 @@ for i, ref in enumerate(unique_refs):
     
     for j in range(len(subset_data)):
         ods_code = subset_data["org_code"].iloc[j]
-        short_name = trust_dict.get(ods_code, ods_code)  # Use ODS code if short name not found
+        # Use ODS code if short name not found
+        short_name = trust_dict.get(ods_code, ods_code)  
         axs[i].annotate(short_name, 
-                        (subset_data["plan_var"].iloc[j], subset_data["standard_var"].iloc[j]), 
+                        (subset_data["plan_var"].iloc[j], 
+                        subset_data["standard_var"].iloc[j]), 
                         xytext=(5, 5), textcoords='offset points')
 
     # Draw vertical and horizontal lines at zero
@@ -122,10 +134,21 @@ for i, ref in enumerate(unique_refs):
     axs[i].axhline(0, color='gray', linestyle='--')
 
     # Add text to each corner of the current scatter plot
-    axs[i].text(0.01, 0.99, 'Below plan, above standard', transform=axs[i].transAxes, ha='left', va='top', color='orange', alpha=0.5)
-    axs[i].text(0.99, 0.99, 'Above plan & standard', transform=axs[i].transAxes, ha='right', va='top', color='green', alpha=0.5)
-    axs[i].text(0.01, 0.01, 'Below plan & standard', transform=axs[i].transAxes, ha='left', va='bottom', color='red', alpha=0.5)
-    axs[i].text(0.99, 0.01, 'Above plan, below standard', transform=axs[i].transAxes, ha='right', va='bottom', color='orange', alpha=0.5)                                                        
+    axs[i].text(0.01, 0.99, 'Below plan, above standard', 
+    transform=axs[i].transAxes, 
+    ha='left', va='top', color='orange', alpha=0.4)
+
+    axs[i].text(0.99, 0.99, 'Above plan & standard', 
+    transform=axs[i].transAxes, 
+    ha='right', va='top', color='green', alpha=0.4)
+
+    axs[i].text(0.01, 0.01, 'Below plan & standard', 
+    transform=axs[i].transAxes, 
+    ha='left', va='bottom', color='red', alpha=0.4)
+    
+    axs[i].text(0.99, 0.01, 'Above plan, below standard', 
+    transform=axs[i].transAxes, 
+    ha='right', va='bottom', color='orange', alpha=0.4)                                                        
 
 # Layout and show charts
 plt.tight_layout()
