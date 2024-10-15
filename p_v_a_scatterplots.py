@@ -82,8 +82,8 @@ data = data[data["dimension_name"] == latest_date]
 
 # Create calculated columns to show distance from plan and distance from target
 data["plan_var"] = data["actual"] - data["plan"]
-data['standard_var'] = data.apply(lambda row: 70 - row['actual'] 
-if row['planning_ref'] == 'E.B.35' else 77 - row['actual'], axis=1)
+data['standard_var'] = data.apply(lambda row: row['actual'] - 85
+if row['planning_ref'] == 'E.B.35' else row['actual'] - 75, axis=1)
 
 # Rename planning_refs to friendly names
 data["planning_ref"].replace(
