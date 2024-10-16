@@ -82,8 +82,9 @@ data = data[data["dimension_name"] == latest_date]
 
 # Create calculated columns to show distance from plan and distance from target
 data["plan_var"] = data["actual"] - data["plan"]
-data['standard_var'] = data.apply(lambda row: row['actual'] - 85
-if row['planning_ref'] == 'E.B.35' else row['actual'] - 75, axis=1)
+# using March 2025 ambition -- 
+data['standard_var'] = data.apply(lambda row: row['actual'] - 70
+if row['planning_ref'] == 'E.B.35' else row['actual'] - 77, axis=1)
 
 # Rename planning_refs to friendly names
 data["planning_ref"].replace(
@@ -117,7 +118,7 @@ for i, ref in enumerate(unique_refs):
     axs[i].scatter(subset_data["plan_var"], subset_data["standard_var"], 
     c="blue")
     axs[i].set_xlabel("Variance from plan (percentage points)")
-    axs[i].set_ylabel("Variance from standard (percentage points)")
+    axs[i].set_ylabel("Variance from Mar '25 interim target (percentage points)")
     axs[i].set_title(f"{ref}")
     
     for j in range(len(subset_data)):
