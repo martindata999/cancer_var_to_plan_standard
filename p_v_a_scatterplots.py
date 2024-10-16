@@ -4,24 +4,24 @@ from datetime import datetime
 
 # Given dictionary of NHS Trusts
 nhs_trusts = {
-    'RN7': 'Dartford',
-    'RVV': 'E Kent',
-    'RWF': 'Maidstone',
-    'RPA': 'Medway',
-    'RDU': 'Frimley',
-    'RXC': 'E Sussex',
-    'RPC': 'Q Victoria',
-    'RYR': 'UH Sussex',
-    'RN5': 'Hampshire Hospitals',
-    'R1F': 'Isle Of Wight',
-    'RHU': 'Portsmouth',
-    'RHM': 'Southampton Univ',
-    'RXQ': 'Buckinghamshire',
-    'RTH': 'Oxford Univ',
-    'RHW': 'Ryl Berkshire',
-    'RTK': 'Ashford',
-    'RA2': 'Ryl Surrey',
-    'RTP': 'Surrey & Sussex'
+    'RHW': 'RBH'
+    ,'RTH': 'OUH'
+    ,'RXQ': 'BHT'
+    ,'RDU': 'Frimley'
+    ,'R1F': 'IOW'
+    ,'RHM': 'UHS'
+    ,'RHU': 'PHU'
+    ,'RN5': 'HHFT'
+    ,'RN7': 'DGT'
+    ,'RPA': 'MFT'
+    ,'RVV': 'EKH'
+    ,'RWF': 'MTW'
+    ,'RA2': 'RSCH'
+    ,'RTK': 'ASP'
+    ,'RTP': 'SASH'
+    ,'RPC': 'QVH'
+    ,'RXC': 'ESH'
+    ,'RYR': 'UHSX'
 }
 
 # Create a dictionary for quick lookup
