@@ -28,7 +28,7 @@ nhs_trusts = {
 trust_dict = nhs_trusts
 
 # Import data
-data_plan = pd.read_csv("C:/Users/martin.bloyce/OneDrive - NHS/Documents - " +
+data_plan = pd.read_csv("C:/Users/martin.bloyce2/OneDrive - NHS/Documents - " +
                 "Regional Analytics - South East/South East/Analysis" +
                 "/Planning/2024-25/Plan_vs_Actual/data_csvs/Plans_2425.csv"
                 )
@@ -51,7 +51,7 @@ data_plan = data_plan[
 data_plan.rename(columns={'metric_value': 'plan'}, inplace=True)
 
 # Bring in actuals data
-data_actuals = pd.read_csv("C:/Users/martin.bloyce/OneDrive - NHS/Documents -" +
+data_actuals = pd.read_csv("C:/Users/martin.bloyce2/OneDrive - NHS/Documents -" +
                 " Regional Analytics - South East/South East/Analysis" +
                 "/Planning/2024-25/Plan_vs_Actual/data_csvs/current_actuals.csv"
                 )
