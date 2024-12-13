@@ -22,10 +22,13 @@ nhs_trusts = {
     ,'RPC': 'QVH'
     ,'RXC': 'ESH'
     ,'RYR': 'UHSX'
-}
-
-nhs_systems = {
-    
+    ,'QU9': 'BOB'
+    ,'QNQ': 'Frim'
+    ,'QRL': 'HIOW'
+    ,'QKS': 'K&M'
+    ,'QXU': 'SH'
+    ,'QNX': 'SSX'
+    ,'Y59': 'SE'
 }
 
 # Create a dictionary for quick lookup
@@ -61,6 +64,9 @@ data_plan = data_plan[
 # Rename value column
 data_plan.rename(columns={'metric_value': 'plan'}, inplace=True)
 
+# Flip diagnostics around so it's the 95% target
+data_plan.loc[data_plan['planning_ref'] == "E.B.28", 'plan'] = 100 - data_plan['plan']
+
 # Bring in actuals data
 data_actuals = pd.read_csv("C:/Users/martin.bloyce2/OneDrive - NHS/Documents -" +
                 " Regional Analytics - South East/South East/Analysis" +
@@ -69,15 +75,15 @@ data_actuals = pd.read_csv("C:/Users/martin.bloyce2/OneDrive - NHS/Documents -" 
 
 # Set metric standards
 standard = {
-    "E.B.35": 77, # cancer 62d
-    "E.B.27": 75, # cancer fds
-    "E.B.28": 5 # diagnostics 6ww
+    "E.B.35": 70, # cancer 62d
+    "E.B.27": 77, # cancer fds
+    "E.B.28": 95 # diagnostics 6ww
 }
 
 # Filter rows
 plan_refs = data_actuals["planning_ref"].isin(["E.B.35", # cancer 62d
                                             "E.B.27", # cancer fds
-                                            "E.B.28a" # diagnostics 6ww
+                                            "E.B.28" # diagnostics 6ww
                                             ])
 # Rename diagnostics plan ref
 data_actuals = data_actuals.replace('E.B.28a', 'E.B.28')
@@ -99,6 +105,8 @@ data_actuals = data_actuals[
 
 # Rename value column
 data_actuals.rename(columns={'metric_value': 'actual'}, inplace=True)
+
+data_actuals.loc[data_actuals['planning_ref'] == "E.B.28", 'actual'] = 100 - data_actuals['actual']
 
 # Merge data_plan and data_actuals
 data = pd.merge(data_plan, data_actuals, 
@@ -137,7 +145,7 @@ data.reset_index(drop=True, inplace=True)
 unique_refs = data["planning_ref"].unique()
 
 # Create chart template area
-fig, axs = plt.subplots(1, len(unique_refs), figsize=(15, 6), sharey=True)
+fig, axs = plt.subplots(len(unique_refs), 1, figsize=(10, 18), sharey=True)
 
 # Ensure axs is always iterable
 if len(unique_refs) == 1:
