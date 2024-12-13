@@ -24,6 +24,10 @@ nhs_trusts = {
     ,'RYR': 'UHSX'
 }
 
+nhs_systems = {
+    
+}
+
 # Create a dictionary for quick lookup
 trust_dict = nhs_trusts
 
@@ -40,7 +44,11 @@ plan_refs = data_plan["planning_ref"].isin(["E.B.35", # cancer 62d
                                             "E.B.27", # cancer fds
                                             "E.B.28" # diagnostics 6ww
                                             ])
-orgs_only = data_plan["icb_code"] != data_plan["org_code"]
+orgs_only = (
+    data_plan["icb_code"] != data_plan["org_code"]
+    ) | (
+    data_plan["planning_ref"] == "E.B.28"
+    ) # diagnostics is at ICB level
 pc_only = data_plan["measure_type"] == "Percentage"
 
 data_plan = data_plan[plan_refs & orgs_only & pc_only]
@@ -69,10 +77,18 @@ standard = {
 # Filter rows
 plan_refs = data_actuals["planning_ref"].isin(["E.B.35", # cancer 62d
                                             "E.B.27", # cancer fds
-                                            "E.B.28" # diagnostics 6ww
+                                            "E.B.28a" # diagnostics 6ww
                                             ])
-orgs_only = data_actuals["icb_code"] != data_actuals["org_code"]
+# Rename diagnostics plan ref
+data_actuals = data_actuals.replace('E.B.28a', 'E.B.28')
+orgs_only = (
+    data_actuals["icb_code"] != data_actuals["org_code"]
+    ) | (
+    data_actuals["planning_ref"] == "E.B.28"
+    ) # diagnostics is at ICB level
 pc_only = data_actuals["measure_type"] == "Percentage"
+# orgs_only = data_actuals["icb_code"] != data_actuals["org_code"]
+# pc_only = data_actuals["measure_type"] == "Percentage"
 
 data_actuals = data_actuals[plan_refs & orgs_only & pc_only]
 
@@ -95,9 +111,9 @@ data = data[data["dimension_name"] == latest_date]
 
 # Create calculated columns to show distance from plan and distance from target
 data["plan_var"] = data["actual"] - data["plan"]
-# using March 2025 ambition -- 
-data['standard_var'] = data.apply(lambda row: row['actual'] - 70 # change this with standard lookup
-if row['planning_ref'] == 'E.B.35' else row['actual'] - 77, axis=1)
+# Bring in standards
+data['standard_var'] = data.apply(lambda row: row['actual'] - 
+                                  standard.get(row['planning_ref']), axis=1)
 
 # Rename planning_refs to friendly names
 data["planning_ref"].replace(
@@ -105,7 +121,9 @@ data["planning_ref"].replace(
     "Cancer 62-day pathways. Total patients seen, and of which those seen " +
     "within 62 days", 
     'E.B.27': 
-    'Cancer 28 day waits (faster diagnosis standard)'}, 
+    'Cancer 28 day waits (faster diagnosis standard)', 
+    'E.B.28':
+    "Diagnostics 6ww %"},
     inplace=True
     )
 
