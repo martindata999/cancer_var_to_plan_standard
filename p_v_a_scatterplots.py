@@ -35,10 +35,7 @@ nhs_trusts = {
 trust_dict = nhs_trusts
 
 # Import data
-data_plan = pd.read_csv("C:/Users/martin.bloyce2/OneDrive - NHS/Documents - " +
-                "Regional Analytics - South East/South East/Analysis" +
-                "/Planning/2024-25/Plan_vs_Actual/data_csvs/Plans_2425.csv"
-                )
+data_plan = pd.read_csv("data/Plans_2425.csv")
 
 data_plan = data_plan[data_plan["source"] == 'June24_plan']
 
@@ -68,10 +65,7 @@ data_plan.rename(columns={'metric_value': 'plan'}, inplace=True)
 data_plan.loc[data_plan['planning_ref'] == "E.B.28", 'plan'] = 100 - data_plan['plan']
 
 # Bring in actuals data
-data_actuals = pd.read_csv("C:/Users/martin.bloyce2/OneDrive - NHS/Documents -" +
-                " Regional Analytics - South East/South East/Analysis" +
-                "/Planning/2024-25/Plan_vs_Actual/data_csvs/current_actuals.csv"
-                )
+data_actuals = pd.read_csv("data/current_actuals.csv")
 
 # Set metric standards
 standard = {
