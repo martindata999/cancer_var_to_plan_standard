@@ -36,7 +36,10 @@ data_plan = pd.read_csv("C:/Users/martin.bloyce2/OneDrive - NHS/Documents - " +
 data_plan = data_plan[data_plan["source"] == 'June24_plan']
 
 # Filter rows
-plan_refs = data_plan["planning_ref"].isin(["E.B.35","E.B.27"])
+plan_refs = data_plan["planning_ref"].isin(["E.B.35", # cancer 62d
+                                            "E.B.27", # cancer fds
+                                            "E.B.28" # diagnostics 6ww
+                                            ])
 orgs_only = data_plan["icb_code"] != data_plan["org_code"]
 pc_only = data_plan["measure_type"] == "Percentage"
 
@@ -56,8 +59,18 @@ data_actuals = pd.read_csv("C:/Users/martin.bloyce2/OneDrive - NHS/Documents -" 
                 "/Planning/2024-25/Plan_vs_Actual/data_csvs/current_actuals.csv"
                 )
 
+# Set metric standards
+standard = {
+    "E.B.35": 77, # cancer 62d
+    "E.B.27": 75, # cancer fds
+    "E.B.28": 5 # diagnostics 6ww
+}
+
 # Filter rows
-plan_refs = data_actuals["planning_ref"].isin(["E.B.35","E.B.27"])
+plan_refs = data_actuals["planning_ref"].isin(["E.B.35", # cancer 62d
+                                            "E.B.27", # cancer fds
+                                            "E.B.28" # diagnostics 6ww
+                                            ])
 orgs_only = data_actuals["icb_code"] != data_actuals["org_code"]
 pc_only = data_actuals["measure_type"] == "Percentage"
 
@@ -83,7 +96,7 @@ data = data[data["dimension_name"] == latest_date]
 # Create calculated columns to show distance from plan and distance from target
 data["plan_var"] = data["actual"] - data["plan"]
 # using March 2025 ambition -- 
-data['standard_var'] = data.apply(lambda row: row['actual'] - 70
+data['standard_var'] = data.apply(lambda row: row['actual'] - 70 # change this with standard lookup
 if row['planning_ref'] == 'E.B.35' else row['actual'] - 77, axis=1)
 
 # Rename planning_refs to friendly names
