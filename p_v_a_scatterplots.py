@@ -128,22 +128,27 @@ latest_date = data["dimension_name"].max()
 data = data[data["dimension_name"] == latest_date]
 
 # Create calculated columns to show distance from plan and distance from target
-data["plan_var"] = data["actual"] - data["plan"]
+data["plan_var"] = data["actual_value"] - data["plan_value"]
+
 # Bring in standards
-data['standard_var'] = data.apply(lambda row: row['actual'] - 
-                                  standard.get(row['planning_ref']), axis=1)
+# data['standard_var'] = data.apply(lambda row: row['actual'] - 
+#                                   standard.get(row['planning_ref']), axis=1)
+data = pd.merge(data, data_targets, on=["planning_ref"])
+
+# Calculate distance from target
+data["standard_var"] = data["actual_value"] - data["target"]
 
 # Rename planning_refs to friendly names
-data["planning_ref"].replace(
-    {'E.B.35':
-    "Cancer 62-day pathways. Total patients seen, and of which those seen " +
-    "within 62 days", 
-    'E.B.27': 
-    'Cancer 28 day waits (faster diagnosis standard)', 
-    'E.B.28':
-    "Diagnostics 6ww %"},
-    inplace=True
-    )
+# data["planning_ref"].replace(
+#     {'E.B.35':
+#     "Cancer 62-day pathways. Total patients seen, and of which those seen " +
+#     "within 62 days", 
+#     'E.B.27': 
+#     'Cancer 28 day waits (faster diagnosis standard)', 
+#     'E.B.28':
+#     "Diagnostics 6ww %"},
+#     inplace=True
+#     )
 
 # Remove duplicates which exist for some reason
 data = data.drop_duplicates()
