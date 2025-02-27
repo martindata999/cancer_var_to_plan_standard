@@ -172,7 +172,7 @@ for i, ref in enumerate(unique_refs):
     axs[i].scatter(subset_data["plan_var"], subset_data["standard_var"], 
     c="blue")
     axs[i].set_xlabel("Variance from plan (percentage points)")
-    axs[i].set_ylabel("Variance from Mar '25 interim target (percentage points)")
+    axs[i].set_ylabel("Variance from target (percentage points)")
     axs[i].set_title(f"{ref}")
     
     for j in range(len(subset_data)):
