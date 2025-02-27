@@ -72,6 +72,13 @@ data_plan = data_plan.drop(['numerator', 'denominator'], axis=1)
 data_actuals['actual_value'] = data_actuals['numerator'] / data_actuals['denominator']
 data_actuals = data_actuals.drop(['numerator', 'denominator'], axis=1)
 
+# Drop unnecessary columns from metrics lookup
+data_metrics = data_metrics.drop(['MeasureSubject', 
+                                 'MeasureType', 
+                                 'Sentiment', 
+                                 'NumberFormat'],
+                                 axis=1)
+
 
 # Rename value column
 # data_plan.rename(columns={'metric_value': 'plan'}, inplace=True)
@@ -120,7 +127,11 @@ data_actuals = data_actuals.drop(['numerator', 'denominator'], axis=1)
 
 # Merge data_plan and data_actuals
 data = pd.merge(data_plan, data_actuals, 
-on=["org_code", "dimension_name", "planning_ref"])
+                on=["org_code", "dimension_name", "planning_ref"])
+
+# Merge to bring in metric names
+data = pd.merge(data, data_metrics,
+                on=["planning_ref"])
 
 # Change dimension_name to dates and filter for latest month
 data["dimension_name"] = pd.to_datetime(data["dimension_name"], format="%b-%y")
@@ -157,7 +168,7 @@ data = data.drop_duplicates()
 data.reset_index(drop=True, inplace=True)
 
 # Create chart outputs using fig, ax, split by planning_ref
-unique_refs = data["planning_ref"].unique()
+unique_refs = data["measure_name"].unique()
 
 # Create chart template area
 fig, axs = plt.subplots(len(unique_refs), 1, figsize=(10, 18), sharey=True)
@@ -168,7 +179,7 @@ if len(unique_refs) == 1:
 
 # Create charts (one per metric)
 for i, ref in enumerate(unique_refs):
-    subset_data = data[data["planning_ref"] == ref]
+    subset_data = data[data["measure_name"] == ref]
     axs[i].scatter(subset_data["plan_var"], subset_data["standard_var"], 
     c="blue")
     axs[i].set_xlabel("Variance from plan (percentage points)")
