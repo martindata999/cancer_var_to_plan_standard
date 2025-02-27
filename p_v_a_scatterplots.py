@@ -67,55 +67,56 @@ data_metrics = pd.read_excel("data/planvactual_testextract.xlsx",
 #     ]
 
 # Create calculated field for plans and actuals, and drop old columns
-data_plan['value'] = data_plan['numerator'] / data_plan['denominator']
+data_plan['plan_value'] = data_plan['numerator'] / data_plan['denominator']
 data_plan = data_plan.drop(['numerator', 'denominator'], axis=1)
-data_actuals['value'] = data_actuals['numerator'] / data_actuals['denominator']
+data_actuals['actual_value'] = data_actuals['numerator'] / data_actuals['denominator']
 data_actuals = data_actuals.drop(['numerator', 'denominator'], axis=1)
 
 
 # Rename value column
-data_plan.rename(columns={'metric_value': 'plan'}, inplace=True)
+# data_plan.rename(columns={'metric_value': 'plan'}, inplace=True)
 
-# Flip diagnostics around so it's the 95% target
-data_plan.loc[data_plan['planning_ref'] == "E.B.28", 'plan'] = 100 - data_plan['plan']
+# # Flip diagnostics around so it's the 95% target
+# data_plan.loc[data_plan['planning_ref'] == "E.B.28", 'plan'] = 100 - data_plan['plan']
 
-# Bring in actuals data
-data_actuals = pd.read_csv("data/current_actuals.csv")
+# # Bring in actuals data
+# data_actuals = pd.read_csv("data/current_actuals.csv")
 
 # Set metric standards
-standard = {
-    "E.B.35": 70, # cancer 62d
-    "E.B.27": 77, # cancer fds
-    "E.B.28": 95 # diagnostics 6ww
-}
+# standard = {
+#     "E.B.35": 70, # cancer 62d
+#     "E.B.27": 77, # cancer fds
+#     "E.B.28": 95 # diagnostics 6ww
+# }
 
-# Filter rows
-plan_refs = data_actuals["planning_ref"].isin(["E.B.35", # cancer 62d
-                                            "E.B.27", # cancer fds
-                                            "E.B.28" # diagnostics 6ww
-                                            ])
-# Rename diagnostics plan ref
-data_actuals = data_actuals.replace('E.B.28a', 'E.B.28')
-orgs_only = (
-    data_actuals["icb_code"] != data_actuals["org_code"]
-    ) | (
-    data_actuals["planning_ref"] == "E.B.28"
-    ) # diagnostics is at ICB level
-pc_only = data_actuals["measure_type"] == "Percentage"
-# orgs_only = data_actuals["icb_code"] != data_actuals["org_code"]
+
+# # Filter rows
+# plan_refs = data_actuals["planning_ref"].isin(["E.B.35", # cancer 62d
+#                                             "E.B.27", # cancer fds
+#                                             "E.B.28" # diagnostics 6ww
+#                                             ])
+# # Rename diagnostics plan ref
+# data_actuals = data_actuals.replace('E.B.28a', 'E.B.28')
+# orgs_only = (
+#     data_actuals["icb_code"] != data_actuals["org_code"]
+#     ) | (
+#     data_actuals["planning_ref"] == "E.B.28"
+#     ) # diagnostics is at ICB level
 # pc_only = data_actuals["measure_type"] == "Percentage"
+# # orgs_only = data_actuals["icb_code"] != data_actuals["org_code"]
+# # pc_only = data_actuals["measure_type"] == "Percentage"
 
-data_actuals = data_actuals[plan_refs & orgs_only & pc_only]
+# data_actuals = data_actuals[plan_refs & orgs_only & pc_only]
 
-# Filter columns
-data_actuals = data_actuals[
-    ["org_code", "dimension_name", "planning_ref", "metric_value"]
-    ]
+# # Filter columns
+# data_actuals = data_actuals[
+#     ["org_code", "dimension_name", "planning_ref", "metric_value"]
+#     ]
 
-# Rename value column
-data_actuals.rename(columns={'metric_value': 'actual'}, inplace=True)
+# # Rename value column
+# data_actuals.rename(columns={'metric_value': 'actual'}, inplace=True)
 
-data_actuals.loc[data_actuals['planning_ref'] == "E.B.28", 'actual'] = 100 - data_actuals['actual']
+# data_actuals.loc[data_actuals['planning_ref'] == "E.B.28", 'actual'] = 100 - data_actuals['actual']
 
 # Merge data_plan and data_actuals
 data = pd.merge(data_plan, data_actuals, 
