@@ -35,28 +35,43 @@ nhs_trusts = {
 trust_dict = nhs_trusts
 
 # Import data
-data_plan = pd.read_csv("data/Plans_2425.csv")
+# data_plan = pd.read_csv("data/Plans_2425.csv")
+data_plan = pd.read_excel("data/planvactual_testextract.xlsx",
+                          sheet_name="plans")
+data_actuals = pd.read_excel("data/planvactual_testextract.xlsx",
+                          sheet_name="actuals")
+data_targets = pd.read_excel("data/planvactual_testextract.xlsx",
+                          sheet_name="targets")
+data_metrics = pd.read_excel("data/planvactual_testextract.xlsx",
+                          sheet_name="metrics")
 
-data_plan = data_plan[data_plan["source"] == 'June24_plan']
+# data_plan = data_plan[data_plan["source"] == 'June24_plan']
 
 # Filter rows
-plan_refs = data_plan["planning_ref"].isin(["E.B.35", # cancer 62d
-                                            "E.B.27", # cancer fds
-                                            "E.B.28" # diagnostics 6ww
-                                            ])
-orgs_only = (
-    data_plan["icb_code"] != data_plan["org_code"]
-    ) | (
-    data_plan["planning_ref"] == "E.B.28"
-    ) # diagnostics is at ICB level
-pc_only = data_plan["measure_type"] == "Percentage"
+# plan_refs = data_plan["planning_ref"].isin(["E.B.35", # cancer 62d
+#                                             "E.B.27", # cancer fds
+#                                             "E.B.28" # diagnostics 6ww
+#                                             ])
+# orgs_only = (
+#     data_plan["icb_code"] != data_plan["org_code"]
+#     ) | (
+#     data_plan["planning_ref"] == "E.B.28"
+#     ) # diagnostics is at ICB level
+# pc_only = data_plan["measure_type"] == "Percentage"
 
-data_plan = data_plan[plan_refs & orgs_only & pc_only]
+# data_plan = data_plan[plan_refs & orgs_only & pc_only]
 
 # Filter columns
-data_plan = data_plan[
-    ["org_code", "dimension_name", "planning_ref", "metric_value"]
-    ]
+# data_plan = data_plan[
+#     ["org_code", "dimension_name", "planning_ref", "metric_value"]
+#     ]
+
+# Create calculated field for plans and actuals, and drop old columns
+data_plan['value'] = data_plan['numerator'] / data_plan['denominator']
+data_plan = data_plan.drop(['numerator', 'denominator'], axis=1)
+data_actuals['value'] = data_actuals['numerator'] / data_actuals['denominator']
+data_actuals = data_actuals.drop(['numerator', 'denominator'], axis=1)
+
 
 # Rename value column
 data_plan.rename(columns={'metric_value': 'plan'}, inplace=True)
