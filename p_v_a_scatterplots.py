@@ -46,26 +46,6 @@ data_targets = pd.read_excel("data/planvactual_testextract.xlsx",
 data_metrics = pd.read_excel("data/planvactual_testextract.xlsx",
                           sheet_name="metrics")
 
-# data_plan = data_plan[data_plan["source"] == 'June24_plan']
-
-# Filter rows
-# plan_refs = data_plan["planning_ref"].isin(["E.B.35", # cancer 62d
-#                                             "E.B.27", # cancer fds
-#                                             "E.B.28" # diagnostics 6ww
-#                                             ])
-# orgs_only = (
-#     data_plan["icb_code"] != data_plan["org_code"]
-#     ) | (
-#     data_plan["planning_ref"] == "E.B.28"
-#     ) # diagnostics is at ICB level
-# pc_only = data_plan["measure_type"] == "Percentage"
-
-# data_plan = data_plan[plan_refs & orgs_only & pc_only]
-
-# Filter columns
-# data_plan = data_plan[
-#     ["org_code", "dimension_name", "planning_ref", "metric_value"]
-#     ]
 
 # Create calculated field for plans and actuals, and drop old columns
 data_plan['plan_value'] = data_plan['numerator'] / data_plan['denominator']
@@ -79,52 +59,6 @@ data_metrics = data_metrics.drop(['MeasureSubject',
                                  'Sentiment', 
                                  'NumberFormat'],
                                  axis=1)
-
-
-# Rename value column
-# data_plan.rename(columns={'metric_value': 'plan'}, inplace=True)
-
-# # Flip diagnostics around so it's the 95% target
-# data_plan.loc[data_plan['planning_ref'] == "E.B.28", 'plan'] = 100 - data_plan['plan']
-
-# # Bring in actuals data
-# data_actuals = pd.read_csv("data/current_actuals.csv")
-
-# Set metric standards
-# standard = {
-#     "E.B.35": 70, # cancer 62d
-#     "E.B.27": 77, # cancer fds
-#     "E.B.28": 95 # diagnostics 6ww
-# }
-
-
-# # Filter rows
-# plan_refs = data_actuals["planning_ref"].isin(["E.B.35", # cancer 62d
-#                                             "E.B.27", # cancer fds
-#                                             "E.B.28" # diagnostics 6ww
-#                                             ])
-# # Rename diagnostics plan ref
-# data_actuals = data_actuals.replace('E.B.28a', 'E.B.28')
-# orgs_only = (
-#     data_actuals["icb_code"] != data_actuals["org_code"]
-#     ) | (
-#     data_actuals["planning_ref"] == "E.B.28"
-#     ) # diagnostics is at ICB level
-# pc_only = data_actuals["measure_type"] == "Percentage"
-# # orgs_only = data_actuals["icb_code"] != data_actuals["org_code"]
-# # pc_only = data_actuals["measure_type"] == "Percentage"
-
-# data_actuals = data_actuals[plan_refs & orgs_only & pc_only]
-
-# # Filter columns
-# data_actuals = data_actuals[
-#     ["org_code", "dimension_name", "planning_ref", "metric_value"]
-#     ]
-
-# # Rename value column
-# data_actuals.rename(columns={'metric_value': 'actual'}, inplace=True)
-
-# data_actuals.loc[data_actuals['planning_ref'] == "E.B.28", 'actual'] = 100 - data_actuals['actual']
 
 # Merge data_plan and data_actuals
 data = pd.merge(data_plan, data_actuals, 
@@ -150,18 +84,6 @@ data = pd.merge(data, data_targets, on=["planning_ref"])
 # Calculate distance from target
 data["standard_var"] = data["actual_value"] - data["target"]
 
-# Rename planning_refs to friendly names
-# data["planning_ref"].replace(
-#     {'E.B.35':
-#     "Cancer 62-day pathways. Total patients seen, and of which those seen " +
-#     "within 62 days", 
-#     'E.B.27': 
-#     'Cancer 28 day waits (faster diagnosis standard)', 
-#     'E.B.28':
-#     "Diagnostics 6ww %"},
-#     inplace=True
-#     )
-
 # Remove duplicates which exist for some reason
 data = data.drop_duplicates()
 
@@ -171,7 +93,7 @@ data.reset_index(drop=True, inplace=True)
 # Create chart outputs using fig, ax, split by planning_ref
 unique_refs = data["measure_name"].unique()
 
-# filepath: /c:/Users/martin.bloyce2/OneDrive - NHS/GitHub/cancer_var_to_plan_standard-3/p_v_a_scatterplots.py
+# create plot, based on what metric is chosen in the app
 def plot_chart_1(chosen_metric):
     filtered_data = data[data["measure_name"] == chosen_metric]
     fig, ax = plt.subplots(figsize=(10, 6))
