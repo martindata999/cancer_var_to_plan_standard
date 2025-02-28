@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from datetime import datetime
+import streamlit as st
 
 # Given dictionary of NHS Trusts
 nhs_trusts = {
@@ -170,53 +171,28 @@ data.reset_index(drop=True, inplace=True)
 # Create chart outputs using fig, ax, split by planning_ref
 unique_refs = data["measure_name"].unique()
 
-# Create chart template area
-def plot_chart_1():
-    fig, axs = plt.subplots(len(unique_refs), 1, figsize=(10, 18), sharey=True)
+# filepath: /c:/Users/martin.bloyce2/OneDrive - NHS/GitHub/cancer_var_to_plan_standard-3/p_v_a_scatterplots.py
+def plot_chart_1(chosen_metric):
+    filtered_data = data[data["measure_name"] == chosen_metric]
+    fig, ax = plt.subplots(figsize=(10, 6))
 
-    # Ensure axs is always iterable
-    if len(unique_refs) == 1:
-        axs = [axs]
+    ax.scatter(filtered_data["plan_var"], filtered_data["standard_var"], c="blue")
+    ax.set_xlabel("Variance from plan (percentage points)")
+    ax.set_ylabel("Variance from target (percentage points)")
+    ax.set_title(f"{chosen_metric}")
 
-    # Create charts (one per metric)
-    for i, ref in enumerate(unique_refs):
-        subset_data = data[data["measure_name"] == ref]
-        axs[i].scatter(subset_data["plan_var"], subset_data["standard_var"], 
-        c="blue")
-        axs[i].set_xlabel("Variance from plan (percentage points)")
-        axs[i].set_ylabel("Variance from target (percentage points)")
-        axs[i].set_title(f"{ref}")
-        
-        for j in range(len(subset_data)):
-            ods_code = subset_data["org_code"].iloc[j]
-            # Use ODS code if short name not found
-            short_name = trust_dict.get(ods_code, ods_code)  
-            axs[i].annotate(short_name, 
-                            (subset_data["plan_var"].iloc[j], 
-                            subset_data["standard_var"].iloc[j]), 
-                            xytext=(5, 5), textcoords='offset points')
+    for i in range(len(filtered_data)):
+        ods_code = filtered_data["org_code"].iloc[i]
+        short_name = trust_dict.get(ods_code, ods_code)
+        ax.annotate(short_name, (filtered_data["plan_var"].iloc[i], filtered_data["standard_var"].iloc[i]), xytext=(5, 5), textcoords='offset points')
 
-        # Draw vertical and horizontal lines at zero
-        axs[i].axvline(0, color='gray', linestyle='--')
-        axs[i].axhline(0, color='gray', linestyle='--')
+    ax.axvline(0, color='gray', linestyle='--')
+    ax.axhline(0, color='gray', linestyle='--')
 
-        # Add text to each corner of the current scatter plot
-        axs[i].text(0.01, 0.99, 'Below plan, above standard', 
-        transform=axs[i].transAxes, 
-        ha='left', va='top', color='orange', alpha=0.4)
+    ax.text(0.01, 0.99, 'Below plan, above standard', transform=ax.transAxes, ha='left', va='top', color='orange', alpha=0.4)
+    ax.text(0.99, 0.99, 'Above plan & standard', transform=ax.transAxes, ha='right', va='top', color='green', alpha=0.4)
+    ax.text(0.01, 0.01, 'Below plan & standard', transform=ax.transAxes, ha='left', va='bottom', color='red', alpha=0.4)
+    ax.text(0.99, 0.01, 'Above plan, below standard', transform=ax.transAxes, ha='right', va='bottom', color='orange', alpha=0.4)
 
-        axs[i].text(0.99, 0.99, 'Above plan & standard', 
-        transform=axs[i].transAxes, 
-        ha='right', va='top', color='green', alpha=0.4)
-
-        axs[i].text(0.01, 0.01, 'Below plan & standard', 
-        transform=axs[i].transAxes, 
-        ha='left', va='bottom', color='red', alpha=0.4)
-        
-        axs[i].text(0.99, 0.01, 'Above plan, below standard', 
-        transform=axs[i].transAxes, 
-        ha='right', va='bottom', color='orange', alpha=0.4)                                                        
-
-    # Layout and show charts
     plt.tight_layout()
     st.pyplot(fig)
