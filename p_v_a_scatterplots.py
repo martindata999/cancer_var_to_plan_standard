@@ -171,51 +171,52 @@ data.reset_index(drop=True, inplace=True)
 unique_refs = data["measure_name"].unique()
 
 # Create chart template area
-fig, axs = plt.subplots(len(unique_refs), 1, figsize=(10, 18), sharey=True)
+def plot_chart_1():
+    fig, axs = plt.subplots(len(unique_refs), 1, figsize=(10, 18), sharey=True)
 
-# Ensure axs is always iterable
-if len(unique_refs) == 1:
-    axs = [axs]
+    # Ensure axs is always iterable
+    if len(unique_refs) == 1:
+        axs = [axs]
 
-# Create charts (one per metric)
-for i, ref in enumerate(unique_refs):
-    subset_data = data[data["measure_name"] == ref]
-    axs[i].scatter(subset_data["plan_var"], subset_data["standard_var"], 
-    c="blue")
-    axs[i].set_xlabel("Variance from plan (percentage points)")
-    axs[i].set_ylabel("Variance from target (percentage points)")
-    axs[i].set_title(f"{ref}")
-    
-    for j in range(len(subset_data)):
-        ods_code = subset_data["org_code"].iloc[j]
-        # Use ODS code if short name not found
-        short_name = trust_dict.get(ods_code, ods_code)  
-        axs[i].annotate(short_name, 
-                        (subset_data["plan_var"].iloc[j], 
-                        subset_data["standard_var"].iloc[j]), 
-                        xytext=(5, 5), textcoords='offset points')
+    # Create charts (one per metric)
+    for i, ref in enumerate(unique_refs):
+        subset_data = data[data["measure_name"] == ref]
+        axs[i].scatter(subset_data["plan_var"], subset_data["standard_var"], 
+        c="blue")
+        axs[i].set_xlabel("Variance from plan (percentage points)")
+        axs[i].set_ylabel("Variance from target (percentage points)")
+        axs[i].set_title(f"{ref}")
+        
+        for j in range(len(subset_data)):
+            ods_code = subset_data["org_code"].iloc[j]
+            # Use ODS code if short name not found
+            short_name = trust_dict.get(ods_code, ods_code)  
+            axs[i].annotate(short_name, 
+                            (subset_data["plan_var"].iloc[j], 
+                            subset_data["standard_var"].iloc[j]), 
+                            xytext=(5, 5), textcoords='offset points')
 
-    # Draw vertical and horizontal lines at zero
-    axs[i].axvline(0, color='gray', linestyle='--')
-    axs[i].axhline(0, color='gray', linestyle='--')
+        # Draw vertical and horizontal lines at zero
+        axs[i].axvline(0, color='gray', linestyle='--')
+        axs[i].axhline(0, color='gray', linestyle='--')
 
-    # Add text to each corner of the current scatter plot
-    axs[i].text(0.01, 0.99, 'Below plan, above standard', 
-    transform=axs[i].transAxes, 
-    ha='left', va='top', color='orange', alpha=0.4)
+        # Add text to each corner of the current scatter plot
+        axs[i].text(0.01, 0.99, 'Below plan, above standard', 
+        transform=axs[i].transAxes, 
+        ha='left', va='top', color='orange', alpha=0.4)
 
-    axs[i].text(0.99, 0.99, 'Above plan & standard', 
-    transform=axs[i].transAxes, 
-    ha='right', va='top', color='green', alpha=0.4)
+        axs[i].text(0.99, 0.99, 'Above plan & standard', 
+        transform=axs[i].transAxes, 
+        ha='right', va='top', color='green', alpha=0.4)
 
-    axs[i].text(0.01, 0.01, 'Below plan & standard', 
-    transform=axs[i].transAxes, 
-    ha='left', va='bottom', color='red', alpha=0.4)
-    
-    axs[i].text(0.99, 0.01, 'Above plan, below standard', 
-    transform=axs[i].transAxes, 
-    ha='right', va='bottom', color='orange', alpha=0.4)                                                        
+        axs[i].text(0.01, 0.01, 'Below plan & standard', 
+        transform=axs[i].transAxes, 
+        ha='left', va='bottom', color='red', alpha=0.4)
+        
+        axs[i].text(0.99, 0.01, 'Above plan, below standard', 
+        transform=axs[i].transAxes, 
+        ha='right', va='bottom', color='orange', alpha=0.4)                                                        
 
-# Layout and show charts
-plt.tight_layout()
-plt.show()
+    # Layout and show charts
+    plt.tight_layout()
+    st.pyplot(fig)
