@@ -196,3 +196,7 @@ def plot_chart_1(chosen_metric):
 
     plt.tight_layout()
     st.pyplot(fig)
+
+# Define dataframe for use in streamlit app
+def get_dataframe():
+    return data
